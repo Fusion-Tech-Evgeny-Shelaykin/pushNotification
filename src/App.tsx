@@ -5,9 +5,10 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -24,6 +25,10 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import PushNotificationController from './utils/pushNotification';
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -57,6 +62,59 @@ function Section({children, title}: SectionProps): JSX.Element {
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+
+  const onResMessage = async (
+    message: FirebaseMessagingTypes.RemoteMessage,
+  ) => {
+    console.log('messageId---------------', message.messageId);
+  };
+
+  const onPushPress = async (
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+  ) => {
+    console.log(
+      'Notification caused app to open from background state:',
+      remoteMessage.notification,
+    );
+    const message = remoteMessage.notification?.body || 'empty message';
+    const title = remoteMessage.notification?.title || 'empty title';
+    Alert.alert(title, message);
+  };
+
+  const onBackgroundAppMessage = async (
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+  ) => {
+    console.log(
+      'Message handled in the background!',
+      remoteMessage.notification,
+    );
+  };
+  const onForegroundMessage = async (
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+  ) => {
+    const message = remoteMessage.notification?.body || 'empty message';
+    const title = remoteMessage.notification?.title || 'empty title';
+    Alert.alert(title, message);
+  };
+
+  useEffect(() => {
+    PushNotificationController.requestNotificationsPermission();
+    console.log(
+      'PushNotificationController.Token',
+      PushNotificationController.Token,
+    );
+    PushNotificationController.onNotificationReceived(onResMessage);
+  }, []);
+
+  useEffect(() => {
+    PushNotificationController.onPressPushNotificationOpenedApp(onPushPress);
+    PushNotificationController.onBackgroundAppPushMessageHandler(
+      onBackgroundAppMessage,
+    );
+    PushNotificationController.onForegroundPushNotificationReceived(
+      onForegroundMessage,
+    );
+  }, []);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
