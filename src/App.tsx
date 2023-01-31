@@ -5,10 +5,9 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
-  Alert,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -28,7 +27,8 @@ import {
 import PushNotificationController from './utils/pushNotification';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {NotifierWrapper} from 'react-native-notifier';
+import {Notifier, NotifierRoot, NotifierWrapper} from 'react-native-notifier';
+import PushNotifire from './components/pushNotifier';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -63,6 +63,8 @@ function Section({children, title}: SectionProps): JSX.Element {
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const notifierRef = useRef();
+
   const onResMessage = async (
     message: FirebaseMessagingTypes.RemoteMessage,
   ) => {
@@ -77,8 +79,14 @@ function App(): JSX.Element {
       remoteMessage.notification,
     );
     const message = remoteMessage.notification?.body || 'empty message';
-    const title = remoteMessage.notification?.title || 'empty title';
-    Alert.alert(title, message);
+    const type = remoteMessage.data.type;
+    Notifier.showNotification({
+      Component: PushNotifire,
+      componentProps: {
+        typeMess: type,
+        description: message,
+      },
+    });
   };
 
   const onBackgroundAppMessage = async (
@@ -93,8 +101,14 @@ function App(): JSX.Element {
     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
   ) => {
     const message = remoteMessage.notification?.body || 'empty message';
-    const title = remoteMessage.notification?.title || 'empty title';
-    Alert.alert(title, message);
+    const type = remoteMessage.data.type;
+    Notifier.showNotification({
+      Component: PushNotifire,
+      componentProps: {
+        typeMess: type,
+        description: message,
+      },
+    });
   };
 
   useEffect(() => {
@@ -111,9 +125,11 @@ function App(): JSX.Element {
     PushNotificationController.onBackgroundAppPushMessageHandler(
       onBackgroundAppMessage,
     );
-    PushNotificationController.onForegroundPushNotificationReceived(
-      onForegroundMessage,
-    );
+    const unsubscribe =
+      PushNotificationController.onForegroundPushNotificationReceived(
+        onForegroundMessage,
+      );
+    return unsubscribe;
   }, []);
 
   const backgroundStyle = {
@@ -152,6 +168,7 @@ function App(): JSX.Element {
               <LearnMoreLinks />
             </View>
           </ScrollView>
+          <NotifierRoot ref={notifierRef} />
         </SafeAreaView>
       </NotifierWrapper>
     </GestureHandlerRootView>
