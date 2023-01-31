@@ -29,6 +29,7 @@ import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Notifier, NotifierRoot, NotifierWrapper} from 'react-native-notifier';
 import PushNotifire from './components/pushNotifier';
+import {NavigationContainer} from '@react-navigation/native';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -137,41 +138,43 @@ function App(): JSX.Element {
   };
 
   return (
-    <GestureHandlerRootView style={styles.rootContainer}>
-      <NotifierWrapper>
-        <SafeAreaView style={backgroundStyle}>
-          <StatusBar
-            barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-            backgroundColor={backgroundStyle.backgroundColor}
-          />
-          <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            style={backgroundStyle}>
-            <Header />
-            <View
-              style={{
-                backgroundColor: isDarkMode ? Colors.black : Colors.white,
-              }}>
-              <Section title="Step One">
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change
-                this screen and then come back to see your edits.
-              </Section>
-              <Section title="See Your Changes">
-                <ReloadInstructions />
-              </Section>
-              <Section title="Debug">
-                <DebugInstructions />
-              </Section>
-              <Section title="Learn More">
-                Read the docs to discover what to do next:
-              </Section>
-              <LearnMoreLinks />
-            </View>
-          </ScrollView>
-          <NotifierRoot ref={notifierRef} />
-        </SafeAreaView>
-      </NotifierWrapper>
-    </GestureHandlerRootView>
+    <NavigationContainer>
+      <GestureHandlerRootView style={styles.rootContainer}>
+        <NotifierWrapper>
+          <SafeAreaView style={backgroundStyle}>
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+              backgroundColor={backgroundStyle.backgroundColor}
+            />
+            <ScrollView
+              contentInsetAdjustmentBehavior="automatic"
+              style={backgroundStyle}>
+              <Header />
+              <View
+                style={{
+                  backgroundColor: isDarkMode ? Colors.black : Colors.white,
+                }}>
+                <Section title="Step One">
+                  Edit <Text style={styles.highlight}>App.tsx</Text> to change
+                  this screen and then come back to see your edits.
+                </Section>
+                <Section title="See Your Changes">
+                  <ReloadInstructions />
+                </Section>
+                <Section title="Debug">
+                  <DebugInstructions />
+                </Section>
+                <Section title="Learn More">
+                  Read the docs to discover what to do next:
+                </Section>
+                <LearnMoreLinks />
+              </View>
+            </ScrollView>
+            <NotifierRoot ref={notifierRef} />
+          </SafeAreaView>
+        </NotifierWrapper>
+      </GestureHandlerRootView>
+    </NavigationContainer>
   );
 }
 
