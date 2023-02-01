@@ -15,9 +15,12 @@ const useAppNavigation = () => {
     [navigation],
   );
 
-  const navigateToProfileScreen = useCallback(() => {
-    navigation.navigate('Profile');
-  }, [navigation]);
+  const navigateToProfileScreen = useCallback(
+    (PokeId: number) => {
+      navigation.navigate('Profile', {PokeId});
+    },
+    [navigation],
+  );
 
   return {
     navigateBack,
