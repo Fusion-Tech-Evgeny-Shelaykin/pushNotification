@@ -1,63 +1,54 @@
-import React, {useEffect} from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
   View,
+  TouchableOpacity,
+  SafeAreaView,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import PushNotificationController from '../../utils/pushNotification';
 import PushNotifire from '../../components/pushNotifier';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import {Notifier} from 'react-native-notifier';
 import useAppNavigation from '../../hooks/useAppNavigation';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import styles from './styles';
+import PersonInfo from '../../components/PersonInfo';
+import {useAppDispatch, useRootSelector} from '../../store/storeHook';
+import pokeApi from '../../api/pokeApi';
 
 const HomeScreen: React.FC = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const dispatch = useAppDispatch();
+  const pokemons = useRootSelector(state => state.poke.pokemons);
+  const filteredPokemons = useRootSelector(
+    state => state.poke.filteredPokemons,
+  );
+  const filter = useRootSelector(state => state.poke.filter.ability);
+  const [offset, setOfset] = useState(0);
+
+  const getPokemonsList = async (nextItem: number) => {
+    try {
+      const persons = await pokeApi.loadPokemons({limit: 10, offset: nextItem});
+      const results = await Promise.all(persons);
+      dispatch({type: 'pokeApi/setPokemons', payload: results});
+    } catch {
+      // showMessage({
+      //   message: 'load error',
+      //   type: 'danger',
+      // });
+    }
   };
+
+  useEffect(() => {
+    getPokemonsList(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadNextHandler = () => {
+    const next = offset + 10;
+    setOfset(next);
+    getPokemonsList(next);
+  };
+
   const {navigateToProfileScreen} = useAppNavigation();
 
   const onResMessage = async (
@@ -129,56 +120,46 @@ const HomeScreen: React.FC = () => {
   }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <View>
+      <View>
+        <SafeAreaView style={styles.screenContainer}>
+          {!filter ? (
+            <FlatList
+              contentContainerStyle={styles.footerList}
+              onEndReached={loadNextHandler}
+              data={pokemons}
+              ListFooterComponent={<ActivityIndicator size="large" />}
+              renderItem={({item}) => (
+                <View style={styles.personItemContainer}>
+                  <TouchableOpacity
+                    onPress={() => navigateToProfileScreen(item.id)}>
+                    <PersonInfo person={item} />
+                  </TouchableOpacity>
+                </View>
+              )}
+              keyExtractor={item => item.name}
+            />
+          ) : (
+            <FlatList
+              contentContainerStyle={styles.footerList}
+              onEndReached={loadNextHandler}
+              data={filteredPokemons}
+              ListFooterComponent={<ActivityIndicator size="large" />}
+              renderItem={({item}) => (
+                <View style={styles.personItemContainer}>
+                  <TouchableOpacity onPress={navigateToProfileScreen}>
+                    <PersonInfo person={item} />
+                  </TouchableOpacity>
+                </View>
+              )}
+              keyExtractor={item => item.name}
+            />
+          )}
+        </SafeAreaView>
+        {/* <FilterDrawer /> */}
+      </View>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default HomeScreen;
