@@ -64,7 +64,7 @@ const HomeScreen: React.FC = () => {
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
-    navigateToProfileScreen();
+    navigateToProfileScreen(0);
     const message = remoteMessage.notification?.body || 'empty message';
     const type = remoteMessage.data.type;
     Notifier.showNotification({
@@ -147,7 +147,8 @@ const HomeScreen: React.FC = () => {
               ListFooterComponent={<ActivityIndicator size="large" />}
               renderItem={({item}) => (
                 <View style={styles.personItemContainer}>
-                  <TouchableOpacity onPress={navigateToProfileScreen}>
+                  <TouchableOpacity
+                    onPress={() => navigateToProfileScreen(item.id)}>
                     <PersonInfo person={item} />
                   </TouchableOpacity>
                 </View>
