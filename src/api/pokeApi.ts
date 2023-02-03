@@ -1,30 +1,27 @@
-import axios from './index';
-import {IPokemonBase, IShortPokemonsList, IExtendedAbility} from '../types/api';
+import {
+  PokemonBase,
+  ShortPokemonsList,
+  ExtendedAbility,
+  LoadPokemonsParams,
+} from '../types/pokemon';
+import api from './index';
 
-type baseParams = {
-  limit: number;
-  offset: number;
-};
-
-export const loadPokemons = async (params: baseParams) => {
-  const {data} = await axios.poke.get<{results: Array<IShortPokemonsList>}>(
-    '',
-    {params},
-  );
-  const promiseList = data.results.map((person: {name: string}) => {
-    return loadPokemon(person.name);
+export const loadPokemons = async (
+  params: LoadPokemonsParams,
+): Promise<ShortPokemonsList[]> => {
+  return await api.get('', {
+    params,
   });
-  return promiseList;
 };
 
-export const loadPokemon = async (name: string) => {
-  const {data}: {data: IPokemonBase} = await axios.poke.get(`/${name}`);
-  return data;
+export const loadPokemon = async (name: string): Promise<PokemonBase> => {
+  return await api.get(`/${name}`);
 };
 
-export const loadPersonAbility = async (url: string) => {
-  const {data} = await axios.poke.get<IExtendedAbility>(url);
-  return data;
+export const loadPersonAbility = async (
+  url: string,
+): Promise<ExtendedAbility> => {
+  return await api.get(url);
 };
 
 export default {

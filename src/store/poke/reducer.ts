@@ -1,13 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-import {IPokemonBase, IExtendedAbility} from '../../types/api';
+import {PokemonBase, ExtendedAbility} from '../../types/pokemon';
 
 export interface IPokeSlice {
   isNoticed: boolean;
-  filteredPokemons: Array<IPokemonBase>;
+  filteredPokemons: Array<PokemonBase>;
   filter: {ability: string};
-  pokemons: Array<IPokemonBase>;
-  extendedAbilities: Array<IExtendedAbility>;
+  pokemons: Array<PokemonBase>;
+  extendedAbilities: Array<ExtendedAbility>;
 }
 
 const initialState: IPokeSlice = {
@@ -27,7 +27,7 @@ export const pokeApiSlice = createSlice({
     isVisible: state => {
       state.isNoticed = !state.isNoticed;
     },
-    setPokemons: (state, action: PayloadAction<Array<IPokemonBase>>) => {
+    setPokemons: (state, action: PayloadAction<Array<PokemonBase>>) => {
       return {
         ...state,
         pokemons: [...state.pokemons, ...action.payload],
@@ -35,7 +35,7 @@ export const pokeApiSlice = createSlice({
     },
     setExtendedAbilities: (
       state,
-      action: PayloadAction<Array<IExtendedAbility>>,
+      action: PayloadAction<Array<ExtendedAbility>>,
     ) => {
       return {
         ...state,
@@ -58,10 +58,7 @@ export const pokeApiSlice = createSlice({
         },
       };
     },
-    setFilteredPokemons: (
-      state,
-      action: PayloadAction<Array<IPokemonBase>>,
-    ) => {
+    setFilteredPokemons: (state, action: PayloadAction<Array<PokemonBase>>) => {
       return {
         ...state,
         filteredPokemons: action.payload,

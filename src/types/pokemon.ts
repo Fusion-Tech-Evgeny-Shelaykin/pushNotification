@@ -1,17 +1,17 @@
-export interface IShortPokemonsList {
+export type ShortPokemonsList = {
   url: string;
   name: string;
-}
+};
 
-export interface IEffectEntries {
+export type EffectEntries = {
   effect: string;
   language: {
     name: string;
   };
   short_effect: string;
-}
+};
 
-export interface IFlavorEntries {
+export type FlavorEntries = {
   flavor_text: string;
   language: {
     name: string;
@@ -19,23 +19,24 @@ export interface IFlavorEntries {
   version_group: {
     name: string;
   };
-}
+};
 
-export interface IExtendedAbility {
+export type ExtendedAbility = {
   id: number;
   name: string;
-  effect_entries: IEffectEntries[];
-  flavor_text_entries: IFlavorEntries[];
-}
+  effect_entries: EffectEntries[];
+  flavor_text_entries: FlavorEntries[];
+};
 
-export interface IAbilityBase {
+export type AbilityBase = {
   ability: {
     name: string;
     url: string;
   };
   is_hidden: boolean;
-}
-export interface IPokemonBase {
+};
+
+export type PokemonBase = {
   id: number;
   name: string;
   sprites: {
@@ -44,5 +45,10 @@ export interface IPokemonBase {
     front_default: string;
     front_shiny: string;
   };
-  abilities: IAbilityBase[];
-}
+  abilities: AbilityBase[];
+};
+
+export type LoadPokemonsParams = {
+  limit: number;
+  offset: number;
+};

@@ -1,10 +1,12 @@
 import axios from 'axios';
 import config from '../config';
 
-const poke = axios.create({
+const api = axios.create({
   baseURL: config.POKE_URL,
 });
 
-export default {
-  poke,
-};
+api.interceptors.response.use(res => {
+  return res.data;
+});
+
+export default api;
