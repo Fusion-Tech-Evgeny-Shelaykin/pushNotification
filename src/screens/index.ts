@@ -1,4 +1,4 @@
-import HomeScreen from './Home';
-import ProfileScreen from './Profile';
+import HomeScreen from './HomeScreen';
+import ProfileScreen from './ProfileScreen';
 
 export {HomeScreen, ProfileScreen};

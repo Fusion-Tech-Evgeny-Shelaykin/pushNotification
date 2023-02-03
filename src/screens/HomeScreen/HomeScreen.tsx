@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -10,14 +10,17 @@ import PushNotificationController from '../../utils/pushNotification';
 import PushNotifire from '../../components/pushNotifier';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
 import {Notifier} from 'react-native-notifier';
-import useAppNavigation from '../../hooks/useAppNavigation';
-import styles from './styles';
 import PersonInfo from '../../components/PersonInfo';
-import {useAppDispatch, useRootSelector} from '../../store/storeHook';
-import pokeApi from '../../api/pokeApi';
+import {useRootSelector} from '../../store/storeHook';
+import styles from './HomeScreen.styles';
+import usePokemons from '../../hooks/usePokemons';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../types/navigation';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 const HomeScreen: React.FC = () => {
-  const dispatch = useAppDispatch();
+  const {setPokemons} = usePokemons();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const pokemons = useRootSelector(state => state.poke.pokemons);
   const filteredPokemons = useRootSelector(
     state => state.poke.filteredPokemons,
@@ -25,23 +28,21 @@ const HomeScreen: React.FC = () => {
   const filter = useRootSelector(state => state.poke.filter.ability);
   const [offset, setOfset] = useState(0);
 
-  const getPokemonsList = async (nextItem: number) => {
-    try {
-      const persons = await pokeApi.loadPokemons({limit: 10, offset: nextItem});
-      const results = await Promise.all(persons);
-      dispatch({type: 'pokeApi/setPokemons', payload: results});
-    } catch {
-      // showMessage({
-      //   message: 'load error',
-      //   type: 'danger',
-      // });
-    }
-  };
+  const getPokemonsList = useCallback(
+    async (nextItem: number) => {
+      try {
+        setPokemons({
+          limit: 10,
+          offset: nextItem,
+        });
+      } catch {}
+    },
+    [setPokemons],
+  );
 
   useEffect(() => {
     getPokemonsList(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getPokemonsList]);
 
   const loadNextHandler = () => {
     const next = offset + 10;
@@ -49,32 +50,31 @@ const HomeScreen: React.FC = () => {
     getPokemonsList(next);
   };
 
-  const {navigateToProfileScreen} = useAppNavigation();
-
   const onResMessage = async (
     message: FirebaseMessagingTypes.RemoteMessage,
   ) => {
     console.log('messageId---------------', message.messageId);
   };
 
-  const onPushPress = async (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-  ) => {
-    console.log(
-      'Notification caused app to open from background state:',
-      remoteMessage.notification,
-    );
-    navigateToProfileScreen(0);
-    const message = remoteMessage.notification?.body || 'empty message';
-    const type = remoteMessage.data.type;
-    Notifier.showNotification({
-      Component: PushNotifire,
-      componentProps: {
-        typeMess: type,
-        description: message,
-      },
-    });
-  };
+  const onPushPress = useCallback(
+    async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      navigation.navigate('Profile', {PokeId: 0});
+      const message = remoteMessage.notification?.body || 'empty message';
+      const type = remoteMessage.data.type;
+      Notifier.showNotification({
+        Component: PushNotifire,
+        componentProps: {
+          typeMess: type,
+          description: message,
+        },
+      });
+    },
+    [navigation],
+  );
 
   const onBackgroundAppMessage = async (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
@@ -117,7 +117,7 @@ const HomeScreen: React.FC = () => {
         onForegroundMessage,
       );
     return unsubscribe;
-  }, []);
+  }, [onPushPress]);
 
   return (
     <View>
@@ -132,7 +132,9 @@ const HomeScreen: React.FC = () => {
               renderItem={({item}) => (
                 <View style={styles.personItemContainer}>
                   <TouchableOpacity
-                    onPress={() => navigateToProfileScreen(item.id)}>
+                    onPress={() =>
+                      navigation.navigate('Profile', {PokeId: item.id})
+                    }>
                     <PersonInfo person={item} />
                   </TouchableOpacity>
                 </View>
@@ -148,7 +150,9 @@ const HomeScreen: React.FC = () => {
               renderItem={({item}) => (
                 <View style={styles.personItemContainer}>
                   <TouchableOpacity
-                    onPress={() => navigateToProfileScreen(item.id)}>
+                    onPress={() =>
+                      navigation.navigate('Profile', {PokeId: item.id})
+                    }>
                     <PersonInfo person={item} />
                   </TouchableOpacity>
                 </View>
@@ -157,7 +161,6 @@ const HomeScreen: React.FC = () => {
             />
           )}
         </SafeAreaView>
-        {/* <FilterDrawer /> */}
       </View>
     </View>
   );

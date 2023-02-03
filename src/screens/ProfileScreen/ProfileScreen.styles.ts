@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     height: 20,
     textTransform: 'capitalize',
     fontWeight: 'bold',
-    // fontFamily: 'Acme-Regular',
+    fontFamily: 'Acme-Regular',
   },
   dotStyle: {
     width: 6,

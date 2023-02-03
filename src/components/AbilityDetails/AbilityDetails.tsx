@@ -1,29 +1,12 @@
 import React from 'react';
-import {View, Text, FlatList} from 'react-native';
+import {View, FlatList} from 'react-native';
 
-import {
-  IExtendedAbility,
-  IEffectEntries,
-  IFlavorEntries,
-} from '../../types/api';
-import styles from './styles';
+import {ExtendedAbility} from '../../types/pokemon';
+import Effect from '../Effect/Effect';
+import Flavor from '../Flavor/Flavor';
+import styles from './AbilityDetails.styles';
 
-const Flavor: React.FC<{flavor: IFlavorEntries}> = ({flavor}) => (
-  <View>
-    <Text
-      style={
-        styles.abilityItemText
-      }>{`${flavor.version_group.name} ${flavor.flavor_text}`}</Text>
-  </View>
-);
-
-const Effect: React.FC<{effect: IEffectEntries}> = ({effect}) => (
-  <View>
-    <Text style={styles.abilityItemText}>{effect.effect}</Text>
-  </View>
-);
-
-const AbilityDetails: React.FC<{abilities: IExtendedAbility; ind: number}> = ({
+const AbilityDetails: React.FC<{abilities: ExtendedAbility; ind: number}> = ({
   abilities,
   ind,
 }) => (

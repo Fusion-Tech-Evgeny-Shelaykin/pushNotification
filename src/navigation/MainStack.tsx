@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {HomeScreen, ProfileScreen} from '../screens';
+import {HomeScreen, ProfileScreen} from '../Screens';
 import {RootStackParamList} from '../types/navigation';
 
 const Stack = createStackNavigator<RootStackParamList>();

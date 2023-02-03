@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -10,18 +10,21 @@ import {
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAppDispatch, useRootSelector} from '../../store/storeHook';
-import {isVisible} from '../../store/poke/reduser';
-import {getAbilities} from '../../store/poke/thunk';
-import styles from './styles';
-import {useRoute} from '@react-navigation/native';
-import {ProfileParams} from '../../types/navigation';
+import {isVisible} from '../../store/poke/reducer';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {ProfileParams, RootStackParamList} from '../../types/navigation';
 import CustomButton from '../../components/CustomButton';
 import AbilityDetails from '../../components/AbilityDetails';
+import styles from './ProfileScreen.styles';
+import usePokemons from '../../hooks/usePokemons';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 const Profile: React.FC = () => {
   const {
     params: {PokeId},
   } = useRoute<ProfileParams>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const {setAbilities} = usePokemons();
   const pokemons = useRootSelector(({poke}) => poke.pokemons);
   const abilities = useRootSelector(({poke}) => poke.extendedAbilities);
   const dispatch = useAppDispatch();
@@ -33,7 +36,8 @@ const Profile: React.FC = () => {
   };
   const personData = pokemons.find(el => el.id === PokeId);
   const listAbilitiesUrl = personData?.abilities.map(item => item.ability.url);
-  useEffect(() => {
+
+  const getPokeDetails = useCallback(async () => {
     if (personData) {
       setRoutes([
         {
@@ -58,11 +62,14 @@ const Profile: React.FC = () => {
         },
       ]);
       if (listAbilitiesUrl) {
-        dispatch(getAbilities(listAbilitiesUrl));
+        await setAbilities(listAbilitiesUrl);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [PokeId]);
+  }, [setAbilities, listAbilitiesUrl, personData]);
+
+  useEffect(() => {
+    getPokeDetails();
+  }, [getPokeDetails]);
 
   interface ILogo {
     source: string;
@@ -80,7 +87,7 @@ const Profile: React.FC = () => {
     );
   };
   const onPressButton = () => {
-    navigation.navigate('Persons');
+    navigation.navigate('Profile', {PokeId});
   };
 
   return (

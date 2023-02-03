@@ -1,17 +1,16 @@
 import React from 'react';
 import {View, Text, Image, FlatList} from 'react-native';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {IAbilityBase, IPokemonBase} from '../../types/api';
-import styles from './styles';
+import {AbilityBase, PokemonBase} from '../../types/pokemon';
+import styles from './PersonInfo.styles';
 
-const Abillities: React.FC<{item: IAbilityBase}> = ({item}) => (
+const Abillities: React.FC<{item: AbilityBase}> = ({item}) => (
   <View>
     <Text style={styles.abilityTitle}>{item.ability.name}</Text>
   </View>
 );
 
-const PersonInfo: React.FC<{person: IPokemonBase}> = ({person}) => (
+const PersonInfo: React.FC<{person: PokemonBase}> = ({person}) => (
   <View style={styles.personItemGroup}>
     <Image
       source={{
@@ -31,11 +30,6 @@ const PersonInfo: React.FC<{person: IPokemonBase}> = ({person}) => (
         keyExtractor={item => item.ability.name}
       />
       <View style={styles.commentContainer}>
-        {/* <MaterialCommunityIcons
-          name="comment-multiple-outline"
-          color="#576270"
-          size={25}
-        /> */}
         <Text style={styles.commentInfo}>
           {Math.floor(Math.random() * 100) + 1} Comments
         </Text>

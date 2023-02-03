@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-const defaultStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     backgroundColor: '#7f7f7f',
@@ -18,4 +18,4 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
-export default defaultStyles;
+export default styles;
