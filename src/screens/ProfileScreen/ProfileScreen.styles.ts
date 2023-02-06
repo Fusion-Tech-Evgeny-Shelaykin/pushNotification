@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
     alignSelf: 'center',
     fontSize: 25,
-    // fontFamily: 'Acme-Regular',
+    fontFamily: 'Acme-Regular',
   },
   sectionContainer: {
     flex: 5,

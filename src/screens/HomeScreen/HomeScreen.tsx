@@ -6,20 +6,27 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import PushNotificationController from '../../utils/pushNotification';
-import PushNotifire from '../../components/pushNotifier';
 import {FirebaseMessagingTypes} from '@react-native-firebase/messaging';
-import {Notifier} from 'react-native-notifier';
 import PersonInfo from '../../components/PersonInfo';
 import {useRootSelector} from '../../store/storeHook';
 import styles from './HomeScreen.styles';
 import usePokemons from '../../hooks/usePokemons';
 import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../../types/navigation';
 import {StackNavigationProp} from '@react-navigation/stack';
+import PushNotifire from '../../components/PushNotifier';
+import {showNotifier} from '../../utils/customPushNotifier';
+import {RootStackParamList} from '../../navigation/MainStack';
+import useMessaging from '../../hooks/useMessaging';
 
-const HomeScreen: React.FC = () => {
+const HomeScreen = () => {
   const {setPokemons} = usePokemons();
+  const {
+    requestNotificationsPermission,
+    onNotificationReceived,
+    onPressPushNotificationOpenedApp,
+    onBackgroundAppPushMessageHandler,
+    onForegroundPushNotificationReceived,
+  } = useMessaging();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const pokemons = useRootSelector(state => state.poke.pokemons);
   const filteredPokemons = useRootSelector(
@@ -65,12 +72,10 @@ const HomeScreen: React.FC = () => {
       navigation.navigate('Profile', {PokeId: 0});
       const message = remoteMessage.notification?.body || 'empty message';
       const type = remoteMessage.data.type;
-      Notifier.showNotification({
-        Component: PushNotifire,
-        componentProps: {
-          typeMess: type,
-          description: message,
-        },
+      showNotifier({
+        PushComponent: PushNotifire,
+        description: message,
+        typeMess: type,
       });
     },
     [navigation],
@@ -89,35 +94,39 @@ const HomeScreen: React.FC = () => {
   ) => {
     const message = remoteMessage.notification?.body || 'empty message';
     const type = remoteMessage.data.type;
-    Notifier.showNotification({
-      Component: PushNotifire,
-      componentProps: {
-        typeMess: type,
-        description: message,
-      },
+    showNotifier({
+      PushComponent: PushNotifire,
+      description: message,
+      typeMess: type,
     });
   };
 
-  useEffect(() => {
-    PushNotificationController.requestNotificationsPermission();
-    console.log(
-      'PushNotificationController.Token',
-      PushNotificationController.Token,
-    );
-    PushNotificationController.onNotificationReceived(onResMessage);
-  }, []);
+  const getToken = useCallback(
+    async () => await requestNotificationsPermission(),
+    [requestNotificationsPermission],
+  );
 
   useEffect(() => {
-    PushNotificationController.onPressPushNotificationOpenedApp(onPushPress);
-    PushNotificationController.onBackgroundAppPushMessageHandler(
-      onBackgroundAppMessage,
-    );
+    const token = getToken();
+    if (!token) {
+      return;
+    }
+    console.log('PushNotification.Token', token);
+    onNotificationReceived(onResMessage);
+  }, [getToken, onNotificationReceived]);
+
+  useEffect(() => {
+    onPressPushNotificationOpenedApp(onPushPress);
+    onBackgroundAppPushMessageHandler(onBackgroundAppMessage);
     const unsubscribe =
-      PushNotificationController.onForegroundPushNotificationReceived(
-        onForegroundMessage,
-      );
+      onForegroundPushNotificationReceived(onForegroundMessage);
     return unsubscribe;
-  }, [onPushPress]);
+  }, [
+    onBackgroundAppPushMessageHandler,
+    onForegroundPushNotificationReceived,
+    onPressPushNotificationOpenedApp,
+    onPushPress,
+  ]);
 
   return (
     <View>

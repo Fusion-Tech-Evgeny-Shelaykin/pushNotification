@@ -12,14 +12,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {useAppDispatch, useRootSelector} from '../../store/storeHook';
 import {isVisible} from '../../store/poke/reducer';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {ProfileParams, RootStackParamList} from '../../types/navigation';
 import CustomButton from '../../components/CustomButton';
 import AbilityDetails from '../../components/AbilityDetails';
 import styles from './ProfileScreen.styles';
 import usePokemons from '../../hooks/usePokemons';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {ProfileParams, RootStackParamList} from '../../navigation/MainStack';
 
-const Profile: React.FC = () => {
+const Profile = () => {
   const {
     params: {PokeId},
   } = useRoute<ProfileParams>();
