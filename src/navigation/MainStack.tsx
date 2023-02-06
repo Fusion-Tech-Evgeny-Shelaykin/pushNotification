@@ -1,7 +1,16 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {HomeScreen, ProfileScreen} from '../Screens';
-import {RootStackParamList} from '../types/navigation';
+import {RouteProp} from '@react-navigation/native';
+
+export type RootStackParamList = {
+  Profile: {
+    PokeId: number;
+  };
+  Home: undefined;
+};
+
+export type ProfileParams = RouteProp<RootStackParamList, 'Profile'>;
 
 const Stack = createStackNavigator<RootStackParamList>();
 
