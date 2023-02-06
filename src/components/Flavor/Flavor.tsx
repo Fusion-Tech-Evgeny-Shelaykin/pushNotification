@@ -4,7 +4,11 @@ import {View, Text} from 'react-native';
 import {FlavorEntries} from '../../types/pokemon';
 import styles from './Flavor.styles';
 
-const Flavor: React.FC<{flavor: FlavorEntries}> = ({flavor}) => (
+type Props = {
+  flavor: FlavorEntries;
+};
+
+const Flavor = ({flavor}: Props) => (
   <View>
     <Text
       style={

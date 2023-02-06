@@ -6,10 +6,12 @@ import Effect from '../Effect/Effect';
 import Flavor from '../Flavor/Flavor';
 import styles from './AbilityDetails.styles';
 
-const AbilityDetails: React.FC<{abilities: ExtendedAbility; ind: number}> = ({
-  abilities,
-  ind,
-}) => (
+type Props = {
+  abilities: ExtendedAbility;
+  ind: number;
+};
+
+const AbilityDetails = ({abilities, ind}: Props) => (
   <View>
     <FlatList
       data={abilities.flavor_text_entries.filter(i => i.language.name === 'en')}
