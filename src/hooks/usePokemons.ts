@@ -1,12 +1,10 @@
-import {useDispatch} from 'react-redux';
 import {loadPersonAbility, loadPokemon, loadPokemons} from '../api/pokeApi';
 import {setExtendedAbilities} from '../store/poke/reducer';
-import {AppDispatch} from '../store/store';
 import {ExtendedAbility, LoadPokemonsParams} from '../types/pokemon';
+import {useAppDispatch} from './useStore';
 
 const usePokemons = () => {
-  const dispatch = useDispatch<AppDispatch>();
-
+  const dispatch = useAppDispatch();
   const setAbilities = async (listUrl: Array<string>) => {
     try {
       const promiseList: Array<Promise<ExtendedAbility>> = listUrl.map(url => {
