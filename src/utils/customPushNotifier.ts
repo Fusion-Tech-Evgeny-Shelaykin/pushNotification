@@ -1,26 +1,22 @@
-import {Notifier, NotifierComponents} from 'react-native-notifier';
+import {Notifier} from 'react-native-notifier';
 
-type NotifireProps = {
+type PushProps = {
   description: string;
-  imgUrl: string;
+  typeMess: 'err' | 'warn' | 'help' | 'success';
 };
 
-class CustomPushNotifier {
-  constructor(params: NotifireProps) {
-    this.description = params.description;
-    this.imgUrl = params.imgUrl;
-  }
-  private description;
-  private imgUrl;
+type NotifireProps = {
+  PushComponent: ({description, typeMess}: PushProps) => JSX.Element;
+  description: string;
+  typeMess: 'err' | 'warn' | 'help' | 'success';
+};
 
-  Show = () =>
-    Notifier.showNotification({
-      description: this.description,
-      Component: NotifierComponents.Notification,
-      componentProps: {
-        imageSource: require('imgUrl'),
-      },
-    });
-}
-
-export default CustomPushNotifier;
+export const showNotifier = (props: NotifireProps) =>
+  Notifier.showNotification({
+    description: props.description,
+    Component: props.PushComponent,
+    componentProps: {
+      typeMess: props.typeMess,
+      description: props.description,
+    },
+  });
