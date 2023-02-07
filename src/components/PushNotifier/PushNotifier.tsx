@@ -1,9 +1,9 @@
 import React, {useMemo} from 'react';
 import {View, Text} from 'react-native';
-import Error from '../assets/error.svg';
-import Help from '../assets/help.svg';
-import Success from '../assets/success.svg';
-import Warning from '../assets/warning.svg';
+import Error from '../../assets/error.svg';
+import Help from '../../assets/help.svg';
+import Success from '../../assets/success.svg';
+import Warning from '../../assets/warning.svg';
 import styles from './PushNotifier.styles';
 
 type PushProps = {
