@@ -18,9 +18,12 @@ const usePokemons = () => {
   const setPokemons = async (params: LoadPokemonsParams) => {
     try {
       const data = await loadPokemons(params);
-      const results = await data.map((person: {name: string}) => {
-        return loadPokemon(person.name);
-      });
+      const promiseResults = data.results.map(
+        async (person: {name: string}) => {
+          return await loadPokemon(person.name);
+        },
+      );
+      const results = await Promise.all(promiseResults);
       dispatch({type: 'pokeApi/setPokemons', payload: results});
     } catch (err) {}
   };

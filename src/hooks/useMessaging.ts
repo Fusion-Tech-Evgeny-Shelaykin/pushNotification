@@ -34,7 +34,6 @@ const useMessaging = () => {
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED;
     if (enabled) {
       const token = await messaging().getToken();
-      console.log('this.token', token);
       return token;
     }
     return '';

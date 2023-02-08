@@ -9,13 +9,13 @@ import api from './index';
 export const loadPokemons = async (
   params: LoadPokemonsParams,
 ): Promise<ShortPokemonsList[]> => {
-  return await api.get('', {
+  return api.get('', {
     params,
   });
 };
 
 export const loadPokemon = async (name: string): Promise<PokemonBase> => {
-  return await api.get(`/${name}`);
+  return api.get(`/${name}`);
 };
 
 export const loadPersonAbility = async (
