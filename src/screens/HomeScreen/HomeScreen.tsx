@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
+  Text,
   TouchableOpacity,
   SafeAreaView,
   FlatList,
@@ -18,7 +19,7 @@ import {showNotifier} from '../../utils/customPushNotifier';
 import {RootStackParamList} from '../../navigation/MainStack';
 import useMessaging from '../../hooks/useMessaging';
 
-const HomeScreen = () => {
+const HomeScreen: React.FC = () => {
   const {setPokemons} = usePokemons();
   const {
     requestNotificationsPermission,
@@ -108,11 +109,10 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const token = getToken();
-    if (!token) {
-      return;
+    if (token) {
+      console.log('PushNotification.Token', token);
+      onNotificationReceived(onResMessage);
     }
-    console.log('PushNotification.Token', token);
-    onNotificationReceived(onResMessage);
   }, [getToken, onNotificationReceived]);
 
   useEffect(() => {

@@ -89,7 +89,6 @@ const Profile = () => {
   const onPressButton = () => {
     navigation.navigate('Profile', {PokeId});
   };
-
   return (
     <View style={styles.screenContainer}>
       <View style={styles.carouselView}>

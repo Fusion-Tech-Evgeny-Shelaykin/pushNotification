@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {View, FlatList} from 'react-native';
 
 import {ExtendedAbility} from '../../types/pokemon';
@@ -11,7 +11,7 @@ type Props = {
   ind: number;
 };
 
-const AbilityDetails = ({abilities, ind}: Props) => (
+const AbilityDetails: FC<Props> = ({abilities, ind}) => (
   <View>
     <FlatList
       data={abilities.flavor_text_entries.filter(i => i.language.name === 'en')}

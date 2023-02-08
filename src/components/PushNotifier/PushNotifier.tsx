@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {FC, useMemo} from 'react';
 import {View, Text} from 'react-native';
 import Error from '../../assets/error.svg';
 import Help from '../../assets/info.svg';
@@ -11,7 +11,7 @@ type PushProps = {
   typeMess: 'err' | 'warn' | 'help' | 'success';
 };
 
-const PushNotifire = ({description, typeMess}: PushProps) => {
+const PushNotifire: FC<PushProps> = ({description, typeMess}: PushProps) => {
   const color = useMemo(() => {
     if (typeMess === 'err') {
       return 'red';
@@ -42,7 +42,6 @@ const PushNotifire = ({description, typeMess}: PushProps) => {
       return <Warning />;
     }
   }, [typeMess]);
-  console.log('type-color=======', color);
 
   return (
     <View style={styles(color).container}>

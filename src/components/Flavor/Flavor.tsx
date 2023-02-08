@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {View, Text} from 'react-native';
 
 import {FlavorEntries} from '../../types/pokemon';
@@ -8,7 +8,7 @@ type Props = {
   flavor: FlavorEntries;
 };
 
-const Flavor = ({flavor}: Props) => (
+const Flavor: FC<Props> = ({flavor}) => (
   <View>
     <Text
       style={
