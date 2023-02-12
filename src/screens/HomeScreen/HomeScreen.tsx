@@ -149,19 +149,21 @@ const HomeScreen: React.FC = () => {
             <FlatList
               contentContainerStyle={styles.footerList}
               onEndReached={loadNextHandler}
-              data={filteredPokemons}
+              data={filteredPokemons.map((item, index) => {
+                return {pokemons: item, ind: index};
+              })}
               ListFooterComponent={<ActivityIndicator size="large" />}
               renderItem={({item}) => (
                 <View style={styles.personItemContainer}>
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate('Profile', {PokeId: item.id})
+                      navigation.navigate('Profile', {PokeId: item.ind})
                     }>
-                    <PersonInfo person={item} />
+                    <PersonInfo person={item.pokemons} />
                   </TouchableOpacity>
                 </View>
               )}
-              keyExtractor={item => `${item.name}---${item.id}`}
+              keyExtractor={item => item.ind.toString()}
             />
           )}
         </SafeAreaView>
