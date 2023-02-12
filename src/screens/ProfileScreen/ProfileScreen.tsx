@@ -69,7 +69,8 @@ const Profile = () => {
 
   useEffect(() => {
     getPokeDetails();
-  }, [getPokeDetails]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   interface ILogo {
     source: string;
@@ -99,6 +100,7 @@ const Profile = () => {
           sliderWidth={420}
           itemWidth={240}
           onSnapToItem={index => setactiveSlide(index)}
+          vertical={false}
         />
       </View>
       <Pagination

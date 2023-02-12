@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   SafeAreaView,
   FlatList,
@@ -50,7 +50,7 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     getPokemonsList(0);
-  }, [getPokemonsList]);
+  }, []);
 
   const loadNextHandler = () => {
     const next = offset + 10;
@@ -113,7 +113,7 @@ const HomeScreen: React.FC = () => {
       console.log('PushNotification.Token', token);
       onNotificationReceived(onResMessage);
     }
-  }, [getToken, onNotificationReceived]);
+  }, []);
 
   useEffect(() => {
     onPressPushNotificationOpenedApp(onPushPress);
@@ -121,12 +121,7 @@ const HomeScreen: React.FC = () => {
     const unsubscribe =
       onForegroundPushNotificationReceived(onForegroundMessage);
     return unsubscribe;
-  }, [
-    onBackgroundAppPushMessageHandler,
-    onForegroundPushNotificationReceived,
-    onPressPushNotificationOpenedApp,
-    onPushPress,
-  ]);
+  }, []);
 
   return (
     <View>
@@ -166,7 +161,7 @@ const HomeScreen: React.FC = () => {
                   </TouchableOpacity>
                 </View>
               )}
-              keyExtractor={item => item.name}
+              keyExtractor={item => `${item.name}---${item.id}`}
             />
           )}
         </SafeAreaView>

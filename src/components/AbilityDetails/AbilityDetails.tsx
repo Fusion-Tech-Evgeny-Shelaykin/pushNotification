@@ -11,27 +11,33 @@ type Props = {
   ind: number;
 };
 
-const AbilityDetails: FC<Props> = ({abilities, ind}) => (
+const AbilityDetails: FC<Props> = ({abilities}) => (
   <View>
     <FlatList
-      data={abilities.flavor_text_entries.filter(i => i.language.name === 'en')}
+      data={abilities.flavor_text_entries
+        .filter(i => i.language.name === 'en')
+        .map((item, index) => {
+          return {flavor: item, ind: index};
+        })}
       renderItem={({item}) => (
         <View style={styles.flavorContainer}>
-          <Flavor flavor={item} />
+          <Flavor flavor={item.flavor} />
         </View>
       )}
-      listKey={`${ind.toString()}-flavor`}
-      keyExtractor={item => `${item}-flavor`}
+      keyExtractor={({ind}) => `${ind}-flavor`}
     />
     <FlatList
-      data={abilities.effect_entries.filter(i => i.language.name === 'en')}
+      data={abilities.effect_entries
+        .filter(i => i.language.name === 'en')
+        .map((item, index) => {
+          return {effect: item, ind: index};
+        })}
       renderItem={({item}) => (
         <View style={styles.effectContainer}>
-          <Effect effect={item} />
+          <Effect effect={item.effect} />
         </View>
       )}
-      listKey={ind.toString()}
-      keyExtractor={({effect}) => `${effect}-effect`}
+      keyExtractor={({ind}) => `${ind}-effect`}
     />
   </View>
 );
