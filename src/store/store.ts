@@ -2,19 +2,13 @@ import {configureStore} from '@reduxjs/toolkit';
 
 import pokeReducer from './poke/reducer';
 
-const middlewares = [];
-
-if (__DEV__) {
-  const createDebugger = require('redux-flipper').default;
-  middlewares.push(createDebugger());
-}
-
 export const store = configureStore({
   reducer: {
     poke: pokeReducer,
   },
+
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware().concat([...middlewares]),
+    getDefaultMiddleware({serializableCheck: false, immutableCheck: false}),
 });
 
 export type RootStore = ReturnType<typeof store.getState>;
